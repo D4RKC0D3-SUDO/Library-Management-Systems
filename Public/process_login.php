@@ -1,71 +1,56 @@
 <?php
-// Start session if not already started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 // Include database and authentication configuration files
 require_once '../config/db.php';
 require_once '../config/auth.php';
 
 // Check if the request method is POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get form data and sanitize it
-    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
-
-    // Validate email format
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $_SESSION['message'] = "Invalid email format!";
-        header("Location: login.php");
-        exit();
-    }
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Get form data
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
     // Prepare SQL statement to select user by email
-    if ($stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?")) {
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->store_result();
+    $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
 
-        // Check if user exists
-        if ($stmt->num_rows > 0) {
-            // Bind result variables
-            $stmt->bind_result($id, $hashed_password);
-            $stmt->fetch();
+    // Check if user exists
+    if ($stmt->num_rows > 0) {
+        // Bind result variables
+        $stmt->bind_result($id, $hashed_password);
+        $stmt->fetch();
 
-            // Verify password
-            if (password_verify($password, $hashed_password)) {
-                // Store user ID in session
-                $_SESSION['user_id'] = $id;
-                $_SESSION['message'] = "Login successful!";
-                // Redirect to add_book.php page
-                header("Location: add_book.php");
-                exit();
-            } else {
-                // Set error message for invalid password
-                $_SESSION['message'] = "Invalid password!";
-                // Redirect to login.php page
-                header("Location: login.php");
-                exit();
+        // Verify password
+        if (password_verify($password, $hashed_password)) {
+            // Start session if not already started
+            if (session_status() == PHP_SESSION_NONE) {
+                session_start();
             }
+            // Store user ID in session
+            $_SESSION['user_id'] = $id;
+            $_SESSION['message'] = "Login successful!";
+            // Redirect to add_book.php page
+            header("Location: add_book.php");
+            exit();
         } else {
-            // Set error message for no user found
-            $_SESSION['message'] = "No user found with that email address!";
+            // Set error message for invalid password
+            $_SESSION['message'] = "Invalid password!";
             // Redirect to login.php page
             header("Location: login.php");
             exit();
         }
-
-        // Close statement
-        $stmt->close();
     } else {
-        // Handle SQL prepare statement error
-        $_SESSION['message'] = "Database error. Please try again later.";
+        // Set error message for no user found
+        $_SESSION['message'] = "No user found with that email address!";
+        // Redirect to login.php page
         header("Location: login.php");
         exit();
     }
 
-    // Close database connection
+    // Close statement and database connection
+    $stmt->close();
     $conn->close();
 }
-
+?>

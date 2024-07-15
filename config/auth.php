@@ -23,6 +23,6 @@ function isAuthenticated() {
 function redirectIfNotAuthenticated($location) {
     if (!isAuthenticated()) {
         header("Location: $location");
-        exit(); // Ensure that no further code is executed after redirection.
+        exit();
     }
 }
