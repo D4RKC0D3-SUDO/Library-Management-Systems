@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Details</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body class="centered">
+    <div class="form-container">
+        <h2>Book Details</h2>
+        <!-- Display book details -->
+        <p>Title: <?php echo htmlspecialchars($title); ?></p>
+        <p>Author: <?php echo htmlspecialchars($author); ?></p>
+        <p>Publication Year: <?php echo htmlspecialchars($publication_year); ?></p>
+        <p>Available Copies: <?php echo htmlspecialchars($available_copies); ?></p>
+        <!-- Link to go back to home page -->
+        <a class="button" href="index.php">Back to Home</a>
+    </div>
+</body>
+</html>
