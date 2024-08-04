@@ -63,8 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $available_copies = $_POST['available_copies']; // Added available copies
 
     // Prepare SQL statement to insert new book
-    $stmt = $conn->prepare("INSERT INTO books (title, author, isbn, publication_year, available_copies) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssii", $title, $author, $isbn, $publication_year, $available_copies);
+   $stmt = $conn->prepare("INSERT INTO books (title, author, isbn, publication_year, available_copies) VALUES (?, ?, ?, ?, ?)");
+ $stmt->bind_param("sssii", $title, $author, $isbn, $publication_year, $available_copies);
 
     // Execute statement and set session message based on success or failure
     if ($stmt->execute()) {
